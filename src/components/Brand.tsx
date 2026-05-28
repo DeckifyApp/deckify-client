@@ -1,50 +1,30 @@
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 
-import { colors } from '../constants/theme';
 import { AppText } from './AppText';
 
+const logoAspectRatio = 212 / 264;
+const blackLogo = require('../../assets/deckify-logo-black.png');
+const purpleLogo = require('../../assets/deckify-logo.png');
+
 type BrandMarkProps = {
-  color?: string;
+  dark?: boolean;
   size?: number;
 };
 
-export function BrandMark({ color = colors.purple, size = 28 }: BrandMarkProps) {
-  const layerRadius = size * 0.18;
-
+export function BrandMark({ dark = false, size = 28 }: BrandMarkProps) {
   return (
-    <View style={{ height: size, width: size }}>
-      <View
-        style={{
-          backgroundColor: color,
-          borderRadius: layerRadius,
-          height: size * 0.7,
-          left: size * 0.05,
-          opacity: 0.45,
-          position: 'absolute',
-          top: size * 0.05,
-          transform: [{ rotate: '-8deg' }],
-          width: size * 0.7,
-        }}
-      />
-      <View
-        style={{
-          backgroundColor: color,
-          borderRadius: layerRadius,
-          height: size * 0.7,
-          left: size * 0.25,
-          position: 'absolute',
-          top: size * 0.25,
-          width: size * 0.7,
-        }}
-      />
-    </View>
+    <Image
+      resizeMode="contain"
+      source={dark ? blackLogo : purpleLogo}
+      style={{ height: size, width: size * logoAspectRatio }}
+    />
   );
 }
 
 export function Brand({ dark = false }: { dark?: boolean }) {
   return (
     <View className="flex-row items-center">
-      <BrandMark color={dark ? colors.black : colors.purple} size={25} />
+      <BrandMark dark={dark} size={25} />
       <AppText className={`ml-2 text-[21px] ${dark ? 'text-[#111111]' : 'text-white'}`} weight="bold">
         Deckify
       </AppText>

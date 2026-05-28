@@ -32,46 +32,52 @@ export function WelcomeScreen() {
         start={{ x: 0.5, y: 0 }}
         style={{ flex: 1 }}
       >
-        <SafeAreaView className="flex-1 px-6 pb-8 pt-5">
-          <Brand />
-          <View className="flex-1 justify-end">
-            <View className="mb-5 self-start rounded-full border border-white/15 bg-white/10 px-4 py-2">
-              <AppText className="text-[12px] text-white" weight="bold">
-                Revisões inteligentes
-              </AppText>
-            </View>
-            <AppText
-              className="text-[42px] leading-[46px] text-white"
-              weight="black"
-            >
-              Deckify
-            </AppText>
-            <AppText
-              className="mt-4 max-w-[330px] text-[18px] leading-[28px] text-white/85"
-              weight="medium"
-            >
-              Transforme seus estudos em sessões curtas, guiadas por contexto,
-              prioridade e progresso real.
-            </AppText>
-            <View className="mt-8 flex-row gap-3">
-              <PrimaryButton
-                className="flex-1 bg-white"
-                labelClassName="text-[16px] text-[#0E1117]"
-                onPress={() =>
-                  navigation.navigate('Signup', { mode: 'register' })
-                }
-                weight="black"
-              >
-                Cadastrar
-              </PrimaryButton>
-              <PrimaryButton
-                className="flex-1 border border-white/55 bg-transparent"
-                labelClassName="text-[16px] text-white"
-                onPress={() => navigation.navigate('Signup', { mode: 'login' })}
-                weight="black"
-              >
-                Entrar
-              </PrimaryButton>
+        <SafeAreaView style={{ flex: 1 }}>
+          <View className="flex-1 px-7 pb-11 pt-7">
+            <Brand />
+            <View className="flex-1 justify-end pt-16">
+              <View className="rounded-[32px] border border-white/10 bg-deck-black/65 p-5">
+                <View className="mb-5 self-start rounded-full border border-white/15 bg-white/10 px-4 py-2">
+                  <AppText className="text-[12px] text-white" weight="bold">
+                    Revisões inteligentes
+                  </AppText>
+                </View>
+                <AppText
+                  className="text-[42px] leading-[46px] text-white"
+                  weight="black"
+                >
+                  Deckify
+                </AppText>
+                <AppText
+                  className="mt-4 max-w-[330px] text-[18px] leading-[28px] text-white/85"
+                  weight="medium"
+                >
+                  Transforme seus estudos em sessões curtas, guiadas por contexto,
+                  prioridade e progresso real.
+                </AppText>
+                <View className="mt-8 flex-row gap-3">
+                  <PrimaryButton
+                    className="flex-1 bg-white"
+                    labelClassName="text-[16px] text-[#0E1117]"
+                    onPress={() =>
+                      navigation.navigate('Signup', { mode: 'register' })
+                    }
+                    weight="black"
+                  >
+                    Cadastrar
+                  </PrimaryButton>
+                  <PrimaryButton
+                    className="flex-1 border border-white/55 bg-transparent"
+                    labelClassName="text-[16px] text-white"
+                    onPress={() =>
+                      navigation.navigate('Signup', { mode: 'login' })
+                    }
+                    weight="black"
+                  >
+                    Entrar
+                  </PrimaryButton>
+                </View>
+              </View>
             </View>
           </View>
         </SafeAreaView>
