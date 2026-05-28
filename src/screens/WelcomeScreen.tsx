@@ -14,10 +14,19 @@ export function WelcomeScreen() {
   const navigation = useNavigation<RootNavigation>();
 
   return (
-    <ImageBackground className="flex-1 bg-deck-black" resizeMode="cover" source={{ uri: welcomeImageUrl }}>
+    <ImageBackground
+      className="flex-1 bg-deck-black"
+      resizeMode="cover"
+      source={{ uri: welcomeImageUrl }}
+    >
       <StatusBar style="light" />
       <LinearGradient
-        colors={['rgba(7,10,18,0.18)', 'rgba(7,10,18,0.28)', 'rgba(7,10,18,0.78)', 'rgba(7,10,18,0.98)']}
+        colors={[
+          'rgba(7,10,18,0.18)',
+          'rgba(7,10,18,0.28)',
+          'rgba(7,10,18,0.78)',
+          'rgba(7,10,18,0.98)',
+        ]}
         end={{ x: 0.5, y: 1 }}
         locations={[0, 0.34, 0.67, 1]}
         start={{ x: 0.5, y: 0 }}
@@ -31,17 +40,26 @@ export function WelcomeScreen() {
                 Revisões inteligentes
               </AppText>
             </View>
-            <AppText className="text-[42px] leading-[46px] text-white" weight="black">
+            <AppText
+              className="text-[42px] leading-[46px] text-white"
+              weight="black"
+            >
               Deckify
             </AppText>
-            <AppText className="mt-4 max-w-[330px] text-[18px] leading-[28px] text-white/85" weight="medium">
-              Transforme seus estudos em sessões curtas, guiadas por contexto, prioridade e progresso real.
+            <AppText
+              className="mt-4 max-w-[330px] text-[18px] leading-[28px] text-white/85"
+              weight="medium"
+            >
+              Transforme seus estudos em sessões curtas, guiadas por contexto,
+              prioridade e progresso real.
             </AppText>
             <View className="mt-8 flex-row gap-3">
               <PrimaryButton
                 className="flex-1 bg-white"
                 labelClassName="text-[16px] text-[#0E1117]"
-                onPress={() => navigation.navigate('Signup')}
+                onPress={() =>
+                  navigation.navigate('Signup', { mode: 'register' })
+                }
                 weight="black"
               >
                 Cadastrar
@@ -49,7 +67,7 @@ export function WelcomeScreen() {
               <PrimaryButton
                 className="flex-1 border border-white/55 bg-transparent"
                 labelClassName="text-[16px] text-white"
-                onPress={() => navigation.navigate('Home')}
+                onPress={() => navigation.navigate('Signup', { mode: 'login' })}
                 weight="black"
               >
                 Entrar

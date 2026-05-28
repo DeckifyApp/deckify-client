@@ -1,9 +1,16 @@
 import { useNavigation } from '@react-navigation/native';
-import { BarChart3, BookOpenCheck, Home, Plus, UserRound } from 'lucide-react-native';
+import {
+  BarChart3,
+  BookOpenCheck,
+  Home,
+  Plus,
+  UserRound,
+} from 'lucide-react-native';
 import { Image, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { avatarUrl, colors } from '../constants/theme';
+import { useAuth } from '../context/AuthContext';
 import type { RootNavigation } from '../types/navigation';
 import { AppText } from './AppText';
 
@@ -14,10 +21,13 @@ type BottomNavProps = {
 export function BottomNav({ active = 'home' }: BottomNavProps) {
   const navigation = useNavigation<RootNavigation>();
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
 
   const iconColor = colors.muted;
+  const profileImageUrl = user?.avatarUrl ?? avatarUrl;
 
-  const itemClass = 'h-[56px] min-w-[44px] items-center justify-center rounded-[18px] px-1';
+  const itemClass =
+    'h-[56px] min-w-[44px] items-center justify-center rounded-[18px] px-1';
   const labelClass = 'mt-1 text-[9px]';
 
   return (
@@ -31,8 +41,15 @@ export function BottomNav({ active = 'home' }: BottomNavProps) {
         className={`${itemClass} ${active === 'home' ? 'bg-deck-soft' : ''}`}
         onPress={() => navigation.navigate('Home')}
       >
-        <Home color={active === 'home' ? colors.white : iconColor} size={20} strokeWidth={2.4} />
-        <AppText className={`${labelClass} ${active === 'home' ? 'text-white' : 'text-deck-muted'}`} weight="bold">
+        <Home
+          color={active === 'home' ? colors.white : iconColor}
+          size={20}
+          strokeWidth={2.4}
+        />
+        <AppText
+          className={`${labelClass} ${active === 'home' ? 'text-white' : 'text-deck-muted'}`}
+          weight="bold"
+        >
           Início
         </AppText>
       </Pressable>
@@ -42,8 +59,15 @@ export function BottomNav({ active = 'home' }: BottomNavProps) {
         className={`${itemClass} ${active === 'library' ? 'bg-deck-soft' : ''}`}
         onPress={() => navigation.navigate('DeckOverview')}
       >
-        <BookOpenCheck color={active === 'library' ? colors.white : iconColor} size={20} strokeWidth={2.2} />
-        <AppText className={`${labelClass} ${active === 'library' ? 'text-white' : 'text-deck-muted'}`} weight="bold">
+        <BookOpenCheck
+          color={active === 'library' ? colors.white : iconColor}
+          size={20}
+          strokeWidth={2.2}
+        />
+        <AppText
+          className={`${labelClass} ${active === 'library' ? 'text-white' : 'text-deck-muted'}`}
+          weight="bold"
+        >
           Decks
         </AppText>
       </Pressable>
@@ -61,8 +85,15 @@ export function BottomNav({ active = 'home' }: BottomNavProps) {
         className={`${itemClass} ${active === 'chart' ? 'bg-deck-soft' : ''}`}
         onPress={() => navigation.navigate('StudyResults')}
       >
-        <BarChart3 color={active === 'chart' ? colors.white : iconColor} size={20} strokeWidth={2.2} />
-        <AppText className={`${labelClass} ${active === 'chart' ? 'text-white' : 'text-deck-muted'}`} weight="bold">
+        <BarChart3
+          color={active === 'chart' ? colors.white : iconColor}
+          size={20}
+          strokeWidth={2.2}
+        />
+        <AppText
+          className={`${labelClass} ${active === 'chart' ? 'text-white' : 'text-deck-muted'}`}
+          weight="bold"
+        >
           Dados
         </AppText>
       </Pressable>
@@ -75,9 +106,15 @@ export function BottomNav({ active = 'home' }: BottomNavProps) {
         {active === 'profile' ? (
           <UserRound color={colors.white} size={20} strokeWidth={2.2} />
         ) : (
-          <Image className="h-6 w-6 rounded-full" source={{ uri: avatarUrl }} />
+          <Image
+            className="h-6 w-6 rounded-full"
+            source={{ uri: profileImageUrl }}
+          />
         )}
-        <AppText className={`${labelClass} ${active === 'profile' ? 'text-white' : 'text-deck-muted'}`} weight="bold">
+        <AppText
+          className={`${labelClass} ${active === 'profile' ? 'text-white' : 'text-deck-muted'}`}
+          weight="bold"
+        >
           Perfil
         </AppText>
       </Pressable>

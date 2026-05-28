@@ -25,6 +25,8 @@ import { StudyQuestionScreen } from './src/screens/StudyQuestionScreen';
 import { StudyResultsScreen } from './src/screens/StudyResultsScreen';
 import { WelcomeScreen } from './src/screens/WelcomeScreen';
 import { colors } from './src/constants/theme';
+import { AuthProvider } from './src/context/AuthContext';
+import { StudySessionProvider } from './src/context/StudySessionContext';
 import type { RootStackParamList } from './src/types/navigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -45,28 +47,41 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Welcome"
-          screenOptions={{
-            animation: 'fade_from_bottom',
-            contentStyle: { backgroundColor: colors.black },
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="Welcome" component={WelcomeScreen} />
-          <Stack.Screen name="Signup" component={SignupScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="DeckOverview" component={DeckOverviewScreen} />
-          <Stack.Screen name="StudyQuestion" component={StudyQuestionScreen} />
-          <Stack.Screen name="StudyAnswer" component={StudyAnswerScreen} />
-          <Stack.Screen name="StudyResults" component={StudyResultsScreen} />
-          <Stack.Screen name="DeckEdit" component={DeckEditScreen} />
-          <Stack.Screen name="CardDetails" component={CardDetailsScreen} />
-          <Stack.Screen name="CardEdit" component={CardEditScreen} />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <AuthProvider>
+        <StudySessionProvider>
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName="Welcome"
+              screenOptions={{
+                animation: 'fade_from_bottom',
+                contentStyle: { backgroundColor: colors.black },
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen name="Welcome" component={WelcomeScreen} />
+              <Stack.Screen name="Signup" component={SignupScreen} />
+              <Stack.Screen name="Home" component={HomeScreen} />
+              <Stack.Screen
+                name="DeckOverview"
+                component={DeckOverviewScreen}
+              />
+              <Stack.Screen
+                name="StudyQuestion"
+                component={StudyQuestionScreen}
+              />
+              <Stack.Screen name="StudyAnswer" component={StudyAnswerScreen} />
+              <Stack.Screen
+                name="StudyResults"
+                component={StudyResultsScreen}
+              />
+              <Stack.Screen name="DeckEdit" component={DeckEditScreen} />
+              <Stack.Screen name="CardDetails" component={CardDetailsScreen} />
+              <Stack.Screen name="CardEdit" component={CardEditScreen} />
+              <Stack.Screen name="Profile" component={ProfileScreen} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </StudySessionProvider>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }
