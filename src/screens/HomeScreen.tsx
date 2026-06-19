@@ -404,9 +404,11 @@ export function HomeScreen() {
         <AppText className="text-[19px] text-white" weight="bold">
           Recomendados
         </AppText>
-        <AppText className="text-[12px] text-deck-muted" weight="bold">
-          Comunidade
-        </AppText>
+        <Pressable onPress={() => navigation.navigate('Community')}>
+          <AppText className="text-[12px] text-deck-purple" weight="black">
+            Ver comunidade
+          </AppText>
+        </Pressable>
       </View>
       <ScrollView
         horizontal

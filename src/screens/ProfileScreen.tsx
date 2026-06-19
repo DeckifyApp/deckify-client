@@ -1,14 +1,7 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import {
-  Bell,
-  LogOut,
-  Save,
-  ShieldCheck,
-  UserRound,
-} from 'lucide-react-native';
-import type { ReactNode } from 'react';
+import { LogOut, Save, Trash2 } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
-import { Image, Pressable, TextInput, View } from 'react-native';
+import { Alert, Image, Pressable, TextInput, View } from 'react-native';
 
 import { AppHeader } from '../components/AppHeader';
 import { AppText } from '../components/AppText';
@@ -19,35 +12,9 @@ import { useAuth } from '../context/AuthContext';
 import { api, type DeckSummary, type StudyStats } from '../services/api';
 import type { RootNavigation } from '../types/navigation';
 
-function PreferenceRow({
-  icon,
-  label,
-  value,
-}: {
-  icon: ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <View className="mb-3 flex-row items-center justify-between rounded-[18px] bg-deck-card px-4 py-4">
-      <View className="flex-row items-center gap-3">
-        <View className="h-10 w-10 items-center justify-center rounded-[14px] bg-deck-soft">
-          {icon}
-        </View>
-        <AppText className="text-[14px] text-white" weight="bold">
-          {label}
-        </AppText>
-      </View>
-      <AppText className="text-[12px] text-deck-muted" weight="black">
-        {value}
-      </AppText>
-    </View>
-  );
-}
-
 export function ProfileScreen() {
   const navigation = useNavigation<RootNavigation>();
-  const { logout, updateProfile, user } = useAuth();
+  const { deleteAccount, logout, updateProfile, user } = useAuth();
   const [name, setName] = useState(user?.name ?? '');
   const [decks, setDecks] = useState<DeckSummary[]>([]);
   const [stats, setStats] = useState<StudyStats | null>(null);
@@ -113,7 +80,29 @@ export function ProfileScreen() {
 
   async function signOut() {
     await logout();
-    navigation.reset({ index: 0, routes: [{ name: 'Welcome' }] });
+  }
+
+  function confirmDeleteAccount() {
+    Alert.alert(
+      'Excluir conta?',
+      'Seus decks, cards e historico de estudo serao excluidos permanentemente.',
+      [
+        { style: 'cancel', text: 'Cancelar' },
+        {
+          style: 'destructive',
+          text: 'Excluir conta',
+          onPress: () => {
+            void deleteAccount().catch((currentError: unknown) => {
+              setError(
+                currentError instanceof Error
+                  ? currentError.message
+                  : 'Nao foi possivel excluir a conta.',
+              );
+            });
+          },
+        },
+      ],
+    );
   }
 
   const firstDeck = decks[0];
@@ -191,25 +180,6 @@ export function ProfileScreen() {
         </AppText>
       </View>
 
-      <AppText className="mb-3 mt-6 text-[19px] text-white" weight="bold">
-        Preferencias
-      </AppText>
-      <PreferenceRow
-        icon={<Bell color={colors.purpleSoft} size={19} strokeWidth={2.2} />}
-        label="Lembretes"
-        value="Ativo"
-      />
-      <PreferenceRow
-        icon={<ShieldCheck color={colors.green} size={19} strokeWidth={2.2} />}
-        label="Privacidade"
-        value="Ativa"
-      />
-      <PreferenceRow
-        icon={<UserRound color={colors.blue} size={19} strokeWidth={2.2} />}
-        label="Plano"
-        value="Estudante"
-      />
-
       <PrimaryButton
         className="mt-3"
         disabled={saving || !name.trim()}
@@ -242,6 +212,15 @@ export function ProfileScreen() {
         <LogOut color={colors.muted} size={17} strokeWidth={2.2} />
         <AppText className="text-[13px] text-deck-muted" weight="bold">
           Sair da conta
+        </AppText>
+      </Pressable>
+      <Pressable
+        className="mt-5 flex-row items-center justify-center gap-2"
+        onPress={confirmDeleteAccount}
+      >
+        <Trash2 color={colors.red} size={17} strokeWidth={2.2} />
+        <AppText className="text-[13px] text-deck-red" weight="bold">
+          Excluir conta permanentemente
         </AppText>
       </Pressable>
     </DarkScreen>

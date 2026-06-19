@@ -156,6 +156,7 @@ const API_BASE_URL = (
 let accessToken: string | null = null;
 let refreshToken: string | null = null;
 let sessionListener: ((payload: AuthPayload | null) => void) | null = null;
+let refreshRequest: Promise<boolean> | null = null;
 
 export function setApiSession(payload: AuthPayload | null): void {
   accessToken = payload?.accessToken ?? null;
@@ -190,7 +191,7 @@ async function parseResponse<T>(response: Response): Promise<ApiResponse<T>> {
   return JSON.parse(text) as ApiResponse<T>;
 }
 
-async function refreshCurrentSession(): Promise<boolean> {
+async function performSessionRefresh(): Promise<boolean> {
   if (!refreshToken) {
     return false;
   }
@@ -214,6 +215,16 @@ async function refreshCurrentSession(): Promise<boolean> {
   setApiSession(payload.data);
   sessionListener?.(payload.data);
   return true;
+}
+
+function refreshCurrentSession(): Promise<boolean> {
+  if (!refreshRequest) {
+    refreshRequest = performSessionRefresh().finally(() => {
+      refreshRequest = null;
+    });
+  }
+
+  return refreshRequest;
 }
 
 async function request<T>(
@@ -346,6 +357,8 @@ export const api = {
     me: () => request<ApiUser>('/users/me'),
     updateMe: (body: { avatarUrl?: string | null; name?: string }) =>
       request<ApiUser>('/users/me', { body, method: 'PATCH' }),
+    deleteMe: () =>
+      request<{ deleted: true }>('/users/me', { method: 'DELETE' }),
   },
   decks: {
     create: (body: {

@@ -2,16 +2,24 @@
   "expo": {
     "name": "Deckify",
     "slug": "deckify",
+    "scheme": "deckify",
     "version": "1.0.0",
     "description": "Deckify turns flashcards into guided study sessions with context, priorities, and progress tracking.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "primaryColor": "#6C63FF",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "ios": {
+      "bundleIdentifier": "com.deckify.flashcards",
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "supportsTablet": true
     },
     "android": {
+      "package": "com.deckify.flashcards",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#0E1117",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -23,8 +31,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-font"
-    ]
+    "plugins": ["expo-font", "expo-secure-store"]
   }
 }

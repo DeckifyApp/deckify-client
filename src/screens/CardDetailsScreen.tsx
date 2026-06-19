@@ -5,7 +5,7 @@ import {
 } from '@react-navigation/native';
 import { ArrowLeft, Edit3, Trash2 } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 
 import { AppHeader } from '../components/AppHeader';
 import { AppText } from '../components/AppText';
@@ -108,15 +108,24 @@ export function CardDetailsScreen() {
     }
   }
 
+  function confirmArchiveCard() {
+    Alert.alert('Arquivar card?', 'O card deixara de aparecer neste deck.', [
+      { style: 'cancel', text: 'Cancelar' },
+      {
+        style: 'destructive',
+        text: 'Arquivar',
+        onPress: () => void archiveCard(),
+      },
+    ]);
+  }
+
   return (
-    <DarkScreen activeTab="plus" scroll>
+    <DarkScreen activeTab="library" scroll>
       <AppHeader />
       <View className="mb-6 flex-row items-center justify-between">
         <Pressable
           className="flex-row items-center gap-2"
-          onPress={() =>
-            navigation.navigate('DeckEdit', { deckId, mode: 'edit' })
-          }
+          onPress={() => navigation.navigate('DeckOverview', { deckId })}
         >
           <ArrowLeft color={colors.muted} size={18} strokeWidth={2.2} />
           <AppText className="text-[13px] text-deck-muted" weight="bold">
@@ -175,29 +184,37 @@ export function CardDetailsScreen() {
             />
           ) : null}
 
-          <PrimaryButton
-            className="mt-2"
-            onPress={() =>
-              navigation.navigate('CardEdit', { cardId, deckId, mode: 'edit' })
-            }
-            weight="black"
-          >
-            <View className="flex-row items-center gap-2">
-              <Edit3 color="white" size={18} strokeWidth={2.3} />
-              <AppText className="text-[16px] text-white" weight="black">
-                Editar card
-              </AppText>
-            </View>
-          </PrimaryButton>
-          <Pressable
-            className="mt-5 flex-row items-center justify-center gap-2"
-            onPress={archiveCard}
-          >
-            <Trash2 color={colors.red} size={17} strokeWidth={2.2} />
-            <AppText className="text-[13px] text-deck-muted" weight="bold">
-              Arquivar card
-            </AppText>
-          </Pressable>
+          {deck?.isOwner ? (
+            <>
+              <PrimaryButton
+                className="mt-2"
+                onPress={() =>
+                  navigation.navigate('CardEdit', {
+                    cardId,
+                    deckId,
+                    mode: 'edit',
+                  })
+                }
+                weight="black"
+              >
+                <View className="flex-row items-center gap-2">
+                  <Edit3 color="white" size={18} strokeWidth={2.3} />
+                  <AppText className="text-[16px] text-white" weight="black">
+                    Editar card
+                  </AppText>
+                </View>
+              </PrimaryButton>
+              <Pressable
+                className="mt-5 flex-row items-center justify-center gap-2"
+                onPress={confirmArchiveCard}
+              >
+                <Trash2 color={colors.red} size={17} strokeWidth={2.2} />
+                <AppText className="text-[13px] text-deck-muted" weight="bold">
+                  Arquivar card
+                </AppText>
+              </Pressable>
+            </>
+          ) : null}
         </>
       )}
     </DarkScreen>

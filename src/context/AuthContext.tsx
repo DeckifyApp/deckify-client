@@ -7,6 +7,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 
 import {
   api,
@@ -18,7 +20,9 @@ import {
 
 type AuthContextValue = {
   accessToken: string | null;
+  deleteAccount: () => Promise<void>;
   error: string | null;
+  initialized: boolean;
   isAuthenticated: boolean;
   loading: boolean;
   login: (input: { email: string; password: string }) => Promise<void>;
@@ -37,6 +41,7 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+const SESSION_KEY = 'deckify.session';
 
 type Session = {
   accessToken: string;
@@ -52,23 +57,92 @@ function toSession(payload: AuthPayload): Session {
   };
 }
 
+async function readStoredSession(): Promise<Session | null> {
+  const value =
+    Platform.OS === 'web'
+      ? sessionStorage.getItem(SESSION_KEY)
+      : await SecureStore.getItemAsync(SESSION_KEY);
+
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const session = JSON.parse(value) as Partial<Session>;
+    return typeof session.accessToken === 'string' &&
+      typeof session.refreshToken === 'string' &&
+      typeof session.user?.id === 'string'
+      ? (session as Session)
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+async function writeStoredSession(session: Session | null): Promise<void> {
+  if (Platform.OS === 'web') {
+    if (session) {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    } else {
+      sessionStorage.removeItem(SESSION_KEY);
+    }
+    return;
+  }
+
+  if (session) {
+    await SecureStore.setItemAsync(SESSION_KEY, JSON.stringify(session));
+  } else {
+    await SecureStore.deleteItemAsync(SESSION_KEY);
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const applySession = useCallback((payload: AuthPayload | null) => {
     setApiSession(payload);
-    setSession(payload ? toSession(payload) : null);
+    const nextSession = payload ? toSession(payload) : null;
+    setSession(nextSession);
+    void writeStoredSession(nextSession).catch(() => undefined);
   }, []);
 
   useEffect(() => {
-    setApiSessionListener((payload) => {
-      setSession(payload ? toSession(payload) : null);
-    });
+    setApiSessionListener(applySession);
 
     return () => setApiSessionListener(null);
-  }, []);
+  }, [applySession]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function restoreSession() {
+      try {
+        const stored = await readStoredSession();
+        if (stored) {
+          const refreshed = await api.auth.refresh(stored.refreshToken);
+          if (active) {
+            applySession(refreshed);
+          }
+        }
+      } catch {
+        if (active) {
+          applySession(null);
+        }
+      } finally {
+        if (active) {
+          setInitialized(true);
+        }
+      }
+    }
+
+    void restoreSession();
+    return () => {
+      active = false;
+    };
+  }, [applySession]);
 
   const register = useCallback(
     async (input: { email: string; name: string; password: string }) => {
@@ -136,10 +210,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const deleteAccount = useCallback(async () => {
+    setError(null);
+    await api.users.deleteMe();
+    applySession(null);
+  }, [applySession]);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       accessToken: session?.accessToken ?? null,
+      deleteAccount,
       error,
+      initialized,
       isAuthenticated: Boolean(session),
       loading,
       login,
@@ -149,7 +231,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       updateProfile,
       user: session?.user ?? null,
     }),
-    [error, loading, login, logout, register, session, updateProfile],
+    [
+      deleteAccount,
+      error,
+      initialized,
+      loading,
+      login,
+      logout,
+      register,
+      session,
+      updateProfile,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

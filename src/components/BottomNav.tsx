@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import {
-  BarChart3,
   BookOpenCheck,
   Home,
   Plus,
+  UsersRound,
   UserRound,
 } from 'lucide-react-native';
 import { Image, Pressable, View } from 'react-native';
@@ -15,7 +15,7 @@ import type { RootNavigation } from '../types/navigation';
 import { AppText } from './AppText';
 
 type BottomNavProps = {
-  active?: 'home' | 'library' | 'plus' | 'chart' | 'profile';
+  active?: 'home' | 'library' | 'plus' | 'community' | 'profile';
 };
 
 export function BottomNav({ active = 'home' }: BottomNavProps) {
@@ -57,7 +57,7 @@ export function BottomNav({ active = 'home' }: BottomNavProps) {
         accessibilityLabel="Biblioteca"
         accessibilityRole="button"
         className={`${itemClass} ${active === 'library' ? 'bg-deck-soft' : ''}`}
-        onPress={() => navigation.navigate('DeckOverview')}
+        onPress={() => navigation.navigate('Library')}
       >
         <BookOpenCheck
           color={active === 'library' ? colors.white : iconColor}
@@ -80,21 +80,21 @@ export function BottomNav({ active = 'home' }: BottomNavProps) {
         <Plus color="white" size={28} strokeWidth={2} />
       </Pressable>
       <Pressable
-        accessibilityLabel="Insights"
+        accessibilityLabel="Comunidade"
         accessibilityRole="button"
-        className={`${itemClass} ${active === 'chart' ? 'bg-deck-soft' : ''}`}
-        onPress={() => navigation.navigate('StudyResults')}
+        className={`${itemClass} ${active === 'community' ? 'bg-deck-soft' : ''}`}
+        onPress={() => navigation.navigate('Community')}
       >
-        <BarChart3
-          color={active === 'chart' ? colors.white : iconColor}
+        <UsersRound
+          color={active === 'community' ? colors.white : iconColor}
           size={20}
           strokeWidth={2.2}
         />
         <AppText
-          className={`${labelClass} ${active === 'chart' ? 'text-white' : 'text-deck-muted'}`}
+          className={`${labelClass} ${active === 'community' ? 'text-white' : 'text-deck-muted'}`}
           weight="bold"
         >
-          Dados
+          Comunidade
         </AppText>
       </Pressable>
       <Pressable

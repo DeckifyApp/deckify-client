@@ -5,6 +5,8 @@ export type RootStackParamList = {
   Welcome: undefined;
   Signup: { mode?: 'login' | 'register' } | undefined;
   Home: undefined;
+  Library: undefined;
+  Community: undefined;
   DeckOverview: { deckId?: string } | undefined;
   StudyAnswer: { deckId: string };
   StudyQuestion: { deckId?: string } | undefined;
@@ -16,4 +18,7 @@ export type RootStackParamList = {
 };
 
 export type RootNavigation = NativeStackNavigationProp<RootStackParamList>;
-export type RootRoute<T extends keyof RootStackParamList> = RouteProp<RootStackParamList, T>;
+export type RootRoute<T extends keyof RootStackParamList> = RouteProp<
+  RootStackParamList,
+  T
+>;

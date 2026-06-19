@@ -3,7 +3,7 @@ import { Check, X } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import type { TextInputProps } from 'react-native';
-import { Pressable, ScrollView, TextInput, View } from 'react-native';
+import { Linking, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText } from '../components/AppText';
@@ -78,8 +78,7 @@ export function SignupScreen() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [acceptsUpdates, setAcceptsUpdates] = useState(true);
-  const [acceptsTerms, setAcceptsTerms] = useState(true);
+  const [acceptsTerms, setAcceptsTerms] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
   const isRegister = mode === 'register';
@@ -107,11 +106,6 @@ export function SignupScreen() {
           password,
         });
       }
-
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Home' }],
-      });
     } catch (currentError) {
       setLocalError(
         currentError instanceof Error
@@ -119,6 +113,14 @@ export function SignupScreen() {
           : 'Nao foi possivel autenticar.',
       );
     }
+  }
+
+  async function openLegalPage(url: string | undefined) {
+    if (!url) {
+      setLocalError('Pagina legal ainda nao configurada.');
+      return;
+    }
+    await Linking.openURL(url);
   }
 
   return (
@@ -189,18 +191,40 @@ export function SignupScreen() {
             {isRegister ? (
               <>
                 <CheckboxRow
-                  checked={acceptsUpdates}
-                  onPress={() => setAcceptsUpdates((value) => !value)}
-                >
-                  Quero receber lembretes e novidades de estudo da Deckify.
-                </CheckboxRow>
-                <CheckboxRow
                   checked={acceptsTerms}
                   onPress={() => setAcceptsTerms((value) => !value)}
                 >
                   Li e aceito a Politica de Privacidade e os Termos de Uso da
                   Deckify.
                 </CheckboxRow>
+                <View className="mb-4 flex-row gap-4 pl-9">
+                  <Pressable
+                    onPress={() =>
+                      void openLegalPage(
+                        process.env.EXPO_PUBLIC_PRIVACY_POLICY_URL,
+                      )
+                    }
+                  >
+                    <AppText
+                      className="text-[11px] text-deck-purple"
+                      weight="bold"
+                    >
+                      Politica de Privacidade
+                    </AppText>
+                  </Pressable>
+                  <Pressable
+                    onPress={() =>
+                      void openLegalPage(process.env.EXPO_PUBLIC_TERMS_URL)
+                    }
+                  >
+                    <AppText
+                      className="text-[11px] text-deck-purple"
+                      weight="bold"
+                    >
+                      Termos de Uso
+                    </AppText>
+                  </Pressable>
+                </View>
               </>
             ) : null}
 

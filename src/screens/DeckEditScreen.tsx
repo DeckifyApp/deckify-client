@@ -5,7 +5,7 @@ import {
 } from '@react-navigation/native';
 import { ChevronRight, Plus, Save, Trash2 } from 'lucide-react-native';
 import { useCallback, useMemo, useState } from 'react';
-import { Pressable, TextInput, View } from 'react-native';
+import { Alert, Pressable, TextInput, View } from 'react-native';
 
 import { AppHeader } from '../components/AppHeader';
 import { AppText } from '../components/AppText';
@@ -25,7 +25,6 @@ import type { RootNavigation, RootRoute } from '../types/navigation';
 const visibilityOptions: Array<{ label: string; value: DeckVisibility }> = [
   { label: 'Privado', value: 'PRIVATE' },
   { label: 'Publico', value: 'PUBLIC' },
-  { label: 'Link', value: 'UNLISTED' },
 ];
 
 function Field({
@@ -167,7 +166,11 @@ export function DeckEditScreen() {
               setTitle(deckData.title);
               setDescription(deckData.description ?? '');
               setTagsInput(deckData.tags.join(', '));
-              setVisibility(deckData.visibility);
+              setVisibility(
+                deckData.visibility === 'UNLISTED'
+                  ? 'PRIVATE'
+                  : deckData.visibility,
+              );
             }
           } else if (active) {
             setDeck(null);
@@ -259,6 +262,21 @@ export function DeckEditScreen() {
     } finally {
       setSaving(false);
     }
+  }
+
+  function confirmArchiveDeck() {
+    Alert.alert(
+      'Arquivar deck?',
+      'O deck deixara de aparecer na sua biblioteca.',
+      [
+        { style: 'cancel', text: 'Cancelar' },
+        {
+          style: 'destructive',
+          text: 'Arquivar',
+          onPress: () => void archiveDeck(),
+        },
+      ],
+    );
   }
 
   return (
@@ -425,7 +443,7 @@ export function DeckEditScreen() {
         <Pressable
           className="mt-5 flex-row items-center justify-center gap-2"
           disabled={saving}
-          onPress={archiveDeck}
+          onPress={confirmArchiveDeck}
         >
           <Trash2 color={colors.red} size={17} strokeWidth={2.2} />
           <AppText className="text-[13px] text-deck-muted" weight="bold">

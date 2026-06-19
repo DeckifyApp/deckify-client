@@ -108,7 +108,7 @@ export function StudyResultsScreen() {
     reviewedCount > 0 ? Math.round((goodCount / reviewedCount) * 100) : 0;
 
   return (
-    <DarkScreen activeTab="chart" scroll>
+    <DarkScreen activeTab="library" scroll>
       <AppHeader />
 
       <View className="mb-5">
