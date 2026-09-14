@@ -120,7 +120,20 @@ export function SignupScreen() {
       setLocalError('Pagina legal ainda nao configurada.');
       return;
     }
-    await Linking.openURL(url);
+
+    try {
+      const parsedUrl = new URL(url);
+      if (
+        (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') ||
+        parsedUrl.username ||
+        parsedUrl.password
+      ) {
+        throw new Error('Invalid legal URL');
+      }
+      await Linking.openURL(parsedUrl.toString());
+    } catch {
+      setLocalError('Pagina legal configurada com URL invalida.');
+    }
   }
 
   return (

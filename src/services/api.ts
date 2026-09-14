@@ -149,9 +149,19 @@ export class ApiError extends Error {
   }
 }
 
-const API_BASE_URL = (
-  process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3333'
-).replace(/\/$/, '');
+const configuredApiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3333';
+const parsedApiUrl = new URL(configuredApiUrl);
+
+if (
+  (parsedApiUrl.protocol !== 'http:' && parsedApiUrl.protocol !== 'https:') ||
+  parsedApiUrl.username ||
+  parsedApiUrl.password ||
+  (process.env.NODE_ENV === 'production' && parsedApiUrl.protocol !== 'https:')
+) {
+  throw new Error('EXPO_PUBLIC_API_URL must be an HTTP(S) URL without credentials; production requires HTTPS');
+}
+
+const API_BASE_URL = parsedApiUrl.toString().replace(/\/$/, '');
 
 let accessToken: string | null = null;
 let refreshToken: string | null = null;
